@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028328, g: 0.22571322, b: 0.30692163, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1973,11 +1973,30 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!4 &1301646697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400150, guid: bbc63157ab4790c43928f489ee9bd9d8, type: 3}
+  m_PrefabInstance: {fileID: 737515589}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1301646698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1301646693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73024fda58ef82f46b31a967a89e7ea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 1301646695}
+  animator: {fileID: 1301646699}
+--- !u!95 &1301646699 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: bbc63157ab4790c43928f489ee9bd9d8, type: 3}
   m_PrefabInstance: {fileID: 737515589}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1308652830
