@@ -11,14 +11,22 @@ public class PlayerConn : MonoBehaviour
     public GameObject sword;
     private bool isSwordEquipd = false;
 
-    private float angleY, dirZ, jumpforce = 6f, turnSpeed = 200f;
+
+    private float angleY, dirZ, jumpforce = 6f, turnSpeed = 300f;
     private bool isGrounded;
     private Vector3 jumpDir;
 
     private float LastAttackTime = 0;
 
+    private Vector3 swordStartRotation = Vector3.zero;
+    private Vector3 swordStartPos = Vector3.zero;
 
-   
+    private void Start()
+    {
+        swordStartPos = sword.transform.localPosition;
+        swordStartRotation = sword.transform.localEulerAngles;
+    }
+
     private void FixedUpdate()
     {
         angleY = Input.GetAxis("Mouse X") * Time.fixedDeltaTime * turnSpeed;
@@ -41,6 +49,7 @@ public class PlayerConn : MonoBehaviour
             Move(dirZ, "isWalkForward", "isWalkBack");
             Run();
             Dodge();
+            UnequipSword();
         }
         else
         {
@@ -54,7 +63,7 @@ public class PlayerConn : MonoBehaviour
         animator.applyRootMotion = false;
         jumpDir = new Vector3(0f, jumpforce, dirZ * jumpforce / 2f);
         jumpDir = transform.TransformDirection(jumpDir);
-        rb.AddForce(jumpDir, ForceMode.Impulse);
+        rb.AddForce(jumpDir * 50, ForceMode.Impulse);
         isGrounded = false;
     }
     private void Move(float dir, string parametrName, string altParamName)
@@ -137,5 +146,7 @@ public class PlayerConn : MonoBehaviour
     private void SwordHolster() 
     {
         sword.transform.SetParent(GameObject.Find("Hips").transform);
+        sword.transform.localPosition = swordStartPos;
+        sword.transform.localEulerAngles = swordStartRotation;
     }
 }
