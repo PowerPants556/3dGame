@@ -6,19 +6,28 @@ public class PlayerConn : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Animator animator;
+    [SerializeField] private GameObject hip;
+    [SerializeField] private GameObject rightHand;
+    public GameObject sword;
+    private bool isSwordEquipd = false;
 
-    private float angleY, dirZ, jumpforce = 6f, turnSpeed = 80f;
+    private float angleY, dirZ, jumpforce = 6f, turnSpeed = 200f;
     private bool isGrounded;
     private Vector3 jumpDir;
 
+    private float LastAttackTime = 0;
+
+
+   
     private void FixedUpdate()
     {
-        angleY = Input.GetAxis("MouseX") * Time.fixedDeltaTime * turnSpeed;
+        angleY = Input.GetAxis("Mouse X") * Time.fixedDeltaTime * turnSpeed;
         dirZ = Input.GetAxis("Vertical");
         transform.Rotate(new Vector3(0f, angleY, 0f));
     }
     private void Update()
     {
+        SwordActivate();
         if (isGrounded)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -37,6 +46,7 @@ public class PlayerConn : MonoBehaviour
         {
             MoveInAir();
         }
+        //UnequipSword();
     }
     private void Jump()
     {
@@ -91,5 +101,41 @@ public class PlayerConn : MonoBehaviour
     {
         isGrounded = true;
         animator.applyRootMotion = true;
+    }
+
+    private void SwordEquip()
+    {
+        sword.transform.SetParent(GameObject.Find("RightHand").transform);
+    }
+    private void SwordActivate()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (!isSwordEquipd)
+            {
+                animator.Play("Equip");
+                isSwordEquipd = true;
+                LastAttackTime = Time.time;
+            }
+            else
+            {
+                animator.Play("Sword_Attack_R");
+                LastAttackTime = Time.time;
+            }
+        }
+    }
+
+    private  void UnequipSword()
+    {
+        if (isSwordEquipd && Time.time > LastAttackTime + 5f)
+        {
+            animator.Play("Sword_Holster");
+            isSwordEquipd = false;
+        }
+    }
+
+    private void SwordHolster() 
+    {
+        sword.transform.SetParent(GameObject.Find("Hips").transform);
     }
 }
