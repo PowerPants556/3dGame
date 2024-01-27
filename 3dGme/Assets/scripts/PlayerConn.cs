@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PlayerConn : MonoBehaviour
 {
+    public static PlayerConn instance;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject hip;
     [SerializeField] private GameObject rightHand;
     public GameObject sword;
     private bool isSwordEquipd = false;
+    [SerializeField] private EnemyConn enemy;
 
 
     private float angleY, dirZ, jumpforce = 6f, turnSpeed = 300f;
@@ -20,9 +22,12 @@ public class PlayerConn : MonoBehaviour
 
     private Vector3 swordStartRotation = Vector3.zero;
     private Vector3 swordStartPos = Vector3.zero;
+    [HideInInspector]
+    public bool isAttacking = false;
 
     private void Start()
     {
+        instance = this;
         swordStartPos = sword.transform.localPosition;
         swordStartRotation = sword.transform.localEulerAngles;
     }
@@ -35,6 +40,7 @@ public class PlayerConn : MonoBehaviour
     }
     private void Update()
     {
+        isAttacking = animator.GetCurrentAnimatorStateInfo(0).IsName("Sword_Attack_R");
         SwordActivate();
         if (isGrounded)
         {
@@ -148,5 +154,13 @@ public class PlayerConn : MonoBehaviour
         sword.transform.SetParent(GameObject.Find("Hips").transform);
         sword.transform.localPosition = swordStartPos;
         sword.transform.localEulerAngles = swordStartRotation;
+    }
+
+    private void OnTriggerEnter(Collider col)
+    {
+        if(col.gameObject.tag == "Weapon" && enemy.isAttacking)
+        {
+            animator.Play("Sword_Shield_Hit_L_2");
+        }
     }
 }

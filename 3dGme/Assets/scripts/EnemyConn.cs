@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class EnemyConn : MonoBehaviour
 {
-
+    public static PlayerConn instance;
     private int health = 3;
     private float prevHitTime, ignoreDamageWindow = 1.5f;
     [SerializeField] private Animator animator;
 
-    [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private UnityEngine.AI.NavMeshAgent agent;
     [SerializeField] private Transform playerT;
-    private float prevAttackTime, pauseAttackWindow;
+    private float prevAttackTime, pauseAttackWindow = 2.5f;
     [SerializeField] private Transform[] patrolTargets;
     private int currentTargetIndex = 0;
+    [HideInInspector]
     public bool isAttacking = false;
+    
     void Start()
     {
         prevHitTime = 0f;
@@ -22,28 +24,30 @@ public class EnemyConn : MonoBehaviour
 
     private void Update()
     {
-        isAttacking = animator.GetCurrentStateInfo(0),IsName("Sword_Attack_R");
+        isAttacking = animator.GetCurrentAnimatorStateInfo(0).IsName("Sword_Attack_R");
         if (health > 1)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, playerT.position);
             if(distanceToPlayer < 2.5f)
             {
-                //attack
+                Attack();
             }
             else if (distanceToPlayer > 30f)
             {
-                //patrol
+                PatrolBehaivor();
             }
             else
             {
-                //move to player
+                MoveToPlayer();
             }
         }
     }
 
    private void OnTriggerEnter(Collider col)
     {
-        if(col.gameObject.tag == "Weapon" && Time.time > prevHitTime + ignoreDamageWindow)
+        if(col.gameObject.tag == "Weapon" &&
+            Time.time > prevHitTime + ignoreDamageWindow &&
+            PlayerConn.instance.isAttacking)
         {
             health--;
             prevHitTime = Time.time;
@@ -64,7 +68,7 @@ public class EnemyConn : MonoBehaviour
     private void MoveToPlayer()
     {
         animator.SetBool("isWalk", true);
-        agent.destinatio = playerT.position;
+        agent.destination = playerT.position;
     }
 
     private void Attack()
@@ -72,7 +76,7 @@ public class EnemyConn : MonoBehaviour
         animator.SetBool("isWalk", false);
         agent.destination = transform.position;
         transform.LookAt(playerT.position);
-        if(Time.time > prevAttackTime + pauseAttackWindow && !animator.GetCurrentAnimationStateInfo(0).IsName("KnockdownRight"))
+        if(Time.time > prevAttackTime + pauseAttackWindow && !animator.GetCurrentAnimatorStateInfo(0).IsName("KnockdownRight"))
         {
             animator.Play("Sword_Attack_R");
             prevAttackTime = Time.time;
@@ -80,7 +84,7 @@ public class EnemyConn : MonoBehaviour
     }
     private void PatrolBehaivor()
     {
-        if(patrolTargets.lenght > 0)
+        if(patrolTargets.Length > 0)
         {
             animator.SetBool("isWalk", true);
             agent.destination = patrolTargets[currentTargetIndex].position;
@@ -89,6 +93,18 @@ public class EnemyConn : MonoBehaviour
     }
     private void CheckNewPatrolTarget()
     {
+        Vector3 targetPos = patrolTargets[currentTargetIndex].position;
+        if (Vector3.Distance(transform.position, targetPos) < 0.5f)
+        {
+            if(currentTargetIndex < patrolTargets.Length - 1)
+            {
+                currentTargetIndex++;
+            }
+            else
+            {
+                currentTargetIndex = 0;
+            }
+        }
 
     }
 }
